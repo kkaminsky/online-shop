@@ -1,0 +1,228 @@
+databaseChangeLog:
+  - logicalFilePath: db/changelog/db.changelog-lesson1.yaml
+  - property:
+      name: uuid_type
+      value: uuid
+      dbms: postgresql
+  - property:
+      name: uuid_type
+      value: uniqueidentifier
+      dbms: mssql
+  - property:
+      name: uuid_function
+      value: uuid_generate_v4()
+      dbms: postgresql
+  - property:
+      name: uuid_function
+      value: NEWID()
+      dbms: mssql
+  - changeSet:
+      id: 1
+      author: konstantin_kaminskiy
+      changes:
+        - createTable:
+            tableName: user
+            columns:
+              - column:
+                  name: id
+                  type: ${uuid_type}
+                  defaultValueComputed: ${uuid_function}
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: username
+                  type: varchar(50)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: password
+                  type: varchar(512)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: display_name
+                  type: varchar(50)
+              - column:
+                  name: role
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+                  defaultValue: 'USER'
+  - changeSet:
+      id: 2
+      author: ilya_mikheshkin
+      changes:
+        - createTable:
+            tableName: payment
+            columns:
+              - column:
+                  name: id
+                  type: ${uuid_type}
+                  defaultValueComputed: ${uuid_function}
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: ${uuid_type}
+                  constraints:
+                    foreignKeyName: fk_payment_user
+                    references: user(id)
+              - column:
+                  name: type
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+                  defaultValue: 'CASH'
+              - column:
+                  name: data
+                  type: varchar(150)
+  - changeSet:
+      id: 3
+      author: vladislav_staratelev
+      changes:
+        - createTable:
+            tableName: contact_data
+            columns:
+              - column:
+                  name: id
+                  type: ${uuid_type}
+                  defaultValueComputed: ${uuid_function}
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: ${uuid_type}
+                  constraints:
+                    foreignKeyName: fk_contact_data_user
+                    references: user(id)
+              - column:
+                  name: type
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+                  defaultValue: 'EMAIL'
+              - column:
+                  name: data
+                  type: varchar(150)
+  - changeSet:
+      id: 4
+      author: alexandr_shvetsov
+      changes:
+        - createTable:
+            tableName: order
+            columns:
+              - column:
+                  name: id
+                  type: ${uuid_type}
+                  defaultValueComputed: ${uuid_function}
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: ${uuid_type}
+                  constraints:
+                    foreignKeyName: fk_order_user
+                    references: user(id)
+              - column:
+                  name: finished
+                  type: boolean
+                  constraints:
+                    nullable: false
+                  defaultValue: false
+  - changeSet:
+      id: 5
+      author: oleg_ivanov
+      changes:
+        - createTable:
+            tableName: game
+            columns:
+              - column:
+                  name: id
+                  type: ${uuid_type}
+                  defaultValueComputed: ${uuid_function}
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: varchar(50)
+              - column:
+                  name: description
+                  type: varchar(500)
+              - column:
+                  name: features
+                  type: varchar(500)
+  - changeSet:
+      id: 6
+      author: ivan_ishimtsev
+      changes:
+        - createTable:
+            tableName: category
+            columns:
+              - column:
+                  name: id
+                  type: ${uuid_type}
+                  defaultValueComputed: ${uuid_function}
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: varchar(50)
+  - changeSet:
+      id: 7
+      author: kristina_gordeeva
+      changes:
+        - createTable:
+            tableName: game_category
+            columns:
+              - column:
+                  name: id
+                  type: ${uuid_type}
+                  defaultValueComputed: ${uuid_function}
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: game_id
+                  type: ${uuid_type}
+                  constraints:
+                    foreignKeyName: fk_game_category_game
+                    references: game(id)
+              - column:
+                  name: category_id
+                  type: ${uuid_type}
+                  constraints:
+                    foreignKeyName: fk_game_category_category
+                    references: category(id)
+  - changeSet:
+      id: 8
+      author: huen_nguen
+      changes:
+        - createTable:
+            tableName: order_game
+            columns:
+              - column:
+                  name: id
+                  type: ${uuid_type}
+                  defaultValueComputed: ${uuid_function}
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: game_id
+                  type: ${uuid_type}
+                  constraints:
+                    foreignKeyName: fk_order_game_game
+                    references: game(id)
+              - column:
+                  name: order_id
+                  type: ${uuid_type}
+                  constraints:
+                    foreignKeyName: fk_order_game_order
+                    references: order(id)
